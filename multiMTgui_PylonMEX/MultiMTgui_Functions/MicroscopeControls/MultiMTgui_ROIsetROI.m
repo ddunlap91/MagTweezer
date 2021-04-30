@@ -1,0 +1,26 @@
+function MultiMTgui_ROIsetROI(hObject,~)
+
+phandles = guidata(hObject);
+hMain = phandles.hMainWindow;
+handles = guidata(hMain);
+
+handles.MMcam.ClearROI();
+
+try
+    delete(handles.ROI_hrect);
+catch
+end
+handles.ROI_hrect = ...
+    imrect2('Parent',handles.MMcam.haxImageAxes,...
+            'HandleVisibility','callback',...
+            'LimMode','manual',...
+            'Color','r',...
+            'LineStyle',':',...
+            'LineWidth',1.5,...
+            'MarkerSize',6,...
+            'ResizeFcn',{@MultiMTgui_ROIRectResize,hMain});
+handles.MMcam.ROI = get(handles.ROI_hrect,'position');
+set(handles.ROI_hrect,'position',handles.MMcam.ROI); %reshape hrect incase ROI changed the limits to match camera
+handles.ROI_lastpos = handles.MMcam.ROI;
+
+guidata(hMain,handles);
